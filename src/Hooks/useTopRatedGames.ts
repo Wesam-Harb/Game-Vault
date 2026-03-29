@@ -1,0 +1,21 @@
+import { getTopRatedGames } from "../API/getGames";
+import { useState, useEffect } from "react";
+import type { Game } from "../Types/Game";
+
+type ApiResponse = {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: Game[];
+};
+export const useTopRatedGames = () => {
+  const [data, setData] = useState<ApiResponse | null>(null);
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    getTopRatedGames()
+      .then(setData)
+      .finally(() => setLoading(false));
+  }, []);
+
+  return { data, loading };
+};
