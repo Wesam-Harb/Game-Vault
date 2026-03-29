@@ -1,22 +1,22 @@
-import type { ApiResponse } from "../Types/NewsType";
+const API_KEY = "a97bb24eb57246f4ad4a4c78e065683c";
+// src/API/getNews.ts
 
 export const getNews = async (
-  categoryIndex?: number,
-): Promise<ApiResponse[]> => {
-  const urls = [
-    "https://rss.app/feeds/v1.1/t5w9PcVipv724SzW.json", // Index 0: Gaming
-    "https://rss.app/feeds/v1.1/tGvg3bYVUIhHKgsw.json", // Index 1: Indie
-    "https://rss.app/feeds/v1.1/thqoQ851Ssr3YxM2.json", // Index 2: E-Sports
-    "https://rss.app/feeds/v1.1/tMOXF2tu1vC1lCmV.json", // Index 3: Hardware
-  ];
+  topic: "all" | "gaming" | "hardware" | "esports" | "indie",
+) => {
+  const queries = {
+    gaming: '("video games" OR "gaming console") NOT "gambling"',
+    hardware: '("RTX" OR "Nvidia" OR "AMD Ryzen" OR "Intel Core")',
+    esports: '("esports" OR "Valorant" OR "League of Legends")',
+    indie: '("indie games" OR "independent developer" OR "itch.io")',
+    // The "All" query combines the core terms of the others
+    all: '("video games" OR "RTX" OR "esports" OR "indie games") NOT "gambling"',
+  };
 
-  // If a category index is passed, only fetch that one URL
-  if (categoryIndex !== undefined && urls[categoryIndex]) {
-    const res = await fetch(urls[categoryIndex]);
-    const data = await res.json();
-    return [data]; // Return as an array so the rest of your code stays the same
-  }
+  const q = encodeURIComponent(queries[topic]);
+  const url = `https://newsapi.org/v2/everything?q=${q}&sortBy=publishedAt&language=en&pageSize=15&apiKey=${API_KEY}`;
 
-  // Otherwise, fetch all (your original logic)
-  return Promise.all(urls.map((url) => fetch(url).then((r) => r.json())));
+  const response = await fetch(url);
+  const data = await response.json();
+  return data.articles;
 };

@@ -8,33 +8,29 @@ import Footer from "./components/Footer";
 import { Skeleton } from "@mui/material";
 
 export default function News() {
-  const [selectedCategory, setSelectedCategory] = useState<number | undefined>(
-    undefined,
-  );
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState("");
 
-  const { newsData, newsLoading } = useNews(selectedCategory);
+  const { newsData, newsLoading } = useNews(
+    selectedCategory as "gaming" | "hardware" | "esports" | "indie" | "all",
+  );
+  console.log(newsData);
 
   const filteredItems = useMemo(() => {
     if (!newsData) return [];
 
-    //Flatten all feeds into one array of Items
-    const allItems = newsData.flatMap((feed) => feed.items);
-
     //Filter based on the search state
-    if (!searchQuery.trim()) return allItems.slice(0, 50);
+    if (!searchQuery.trim()) return newsData;
 
-    return allItems
-      .filter(
-        (item) =>
-          item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          item.content_text.toLowerCase().includes(searchQuery.toLowerCase()),
-      )
-      .slice(0, 50);
+    return newsData.filter(
+      (item) =>
+        item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.description.toLowerCase().includes(searchQuery.toLowerCase()),
+    );
   }, [newsData, searchQuery]);
 
-  const breakingNews = newsData?.slice(0, 1)[0].items.slice(0, 1)[0];
-  const trending = newsData?.slice(0, 1)[0].items.slice(1, 4);
+  const breakingNews = newsData?.slice(0, 1)[0];
+  const trending = newsData?.slice(1, 4);
 
   return (
     <>
@@ -65,7 +61,10 @@ export default function News() {
                   loading="lazy"
                   alt="Featured News"
                   className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                  src={breakingNews?.image}
+                  src={
+                    breakingNews?.urlToImage ||
+                    "https://via.placeholder.com/800x450?text=No+Image"
+                  }
                 />
                 <div className="absolute inset-0 bg-linear-to-t from-black via-black/70 to-transparent"></div>
                 <div className="relative p-4 h-full w-full flex flex-col">
@@ -77,7 +76,7 @@ export default function News() {
                       {breakingNews?.title}
                     </h2>
                     <p className="text-slate-200 mt-3 max-sm:text-sm text-lg line-clamp-2">
-                      {breakingNews?.content_text}
+                      {breakingNews?.description || "No description available."}
                     </p>
                   </div>
                   <div className="mt-6 flex items-center space-x-4">
@@ -87,7 +86,7 @@ export default function News() {
                       </button>
                     </a>
                     <span className="text-sm text-slate-300">
-                      {breakingNews?.date_published.slice(0, 10)}
+                      {breakingNews?.publishedAt.slice(0, 10)}
                     </span>
                   </div>
                 </div>
@@ -154,26 +153,26 @@ export default function News() {
               <ul className="space-y-2">
                 <li
                   className="flex items-center cursor-pointer justify-between p-2 rounded-lg hover:bg-slate-800 transition-colors text-blue-400 font-medium"
-                  onClick={() => setSelectedCategory(undefined)}
+                  onClick={() => setSelectedCategory("all")}
                 >
                   <span>Latest News</span>
                 </li>
 
                 <li
                   className="flex items-center cursor-pointer justify-between p-2 rounded-lg hover:bg-slate-800 transition-colors text-blue-400 font-medium"
-                  onClick={() => setSelectedCategory(3)}
+                  onClick={() => setSelectedCategory("hardware")}
                 >
                   <span>Hardware</span>
                 </li>
                 <li
                   className="flex items-center cursor-pointer justify-between p-2 rounded-lg hover:bg-slate-800 transition-colors text-blue-400 font-medium"
-                  onClick={() => setSelectedCategory(2)}
+                  onClick={() => setSelectedCategory("esports")}
                 >
                   <span>E-Sports</span>
                 </li>
                 <li
                   className="flex items-center cursor-pointer justify-between p-2 rounded-lg hover:bg-slate-800 transition-colors text-blue-400 font-medium"
-                  onClick={() => setSelectedCategory(1)}
+                  onClick={() => setSelectedCategory("indie")}
                 >
                   <span>Indie Games</span>
                 </li>
@@ -209,14 +208,17 @@ export default function News() {
                         </div>
                       </div>
                     ))
-                  : trending?.map((news) => (
-                      <a href={news.url} key={news.id} className="block">
+                  : trending?.map((news, index) => (
+                      <a href={news.url} key={index} className="block">
                         <div className="flex space-x-3 group cursor-pointer">
                           <div className="w-16 h-16 bg-slate-700 rounded-lg shrink-0 overflow-hidden">
                             <img
                               loading="lazy"
                               className="w-full h-full object-cover"
-                              src={news.image}
+                              src={
+                                news.urlToImage ||
+                                "https://via.placeholder.com/64?text=No+Image"
+                              }
                             />
                           </div>
                           <div>
@@ -224,7 +226,7 @@ export default function News() {
                               {news.title}
                             </h5>
                             <span className="text-[10px] text-slate-500">
-                              by {news.authors[0].name}
+                              by {news.author}
                             </span>
                           </div>
                         </div>

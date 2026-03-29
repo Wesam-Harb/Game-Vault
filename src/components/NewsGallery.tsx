@@ -1,5 +1,5 @@
 import { useState, useMemo, memo } from "react";
-import type { Item } from "../Types/NewsType";
+import type { ApiResponse } from "../Types/NewsType";
 
 //MUI component
 import Pagination from "@mui/material/Pagination";
@@ -9,7 +9,7 @@ export function NewsGallery({
   newsData,
   search,
 }: {
-  newsData: Item[];
+  newsData: ApiResponse[];
   search: string;
 }) {
   const [currentPage, setCurrentPage] = useState(1);
@@ -81,8 +81,8 @@ export function NewsGallery({
   return (
     <div>
       <div className="space-y-6">
-        {currentItems.map((item: Item) => (
-          <NewsCard key={item.id} item={item} />
+        {currentItems.map((item: ApiResponse) => (
+          <NewsCard key={item.url} item={item} />
         ))}
       </div>
 
@@ -91,7 +91,7 @@ export function NewsGallery({
   );
 }
 
-const NewsCard = memo(({ item }: { item: Item }) => {
+const NewsCard = memo(({ item }: { item: ApiResponse }) => {
   return (
     <article className="glass-effect rounded-xl overflow-hidden flex flex-col md:flex-row h-auto md:h-52 group">
       <div className="w-full md:w-80 h-48 md:h-full overflow-hidden shrink-0">
@@ -99,27 +99,30 @@ const NewsCard = memo(({ item }: { item: Item }) => {
           loading="lazy"
           alt={item.title}
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-          src={item.image}
+          src={
+            item.urlToImage ||
+            "https://via.placeholder.com/400x250?text=No+Image"
+          }
         />
       </div>
       <div className="p-6 flex flex-col justify-between grow">
         <div>
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs text-slate-500">
-              {item.date_published.slice(0, 10)}
+              {item.publishedAt.slice(0, 10)}
             </span>
           </div>
           <h4 className="text-xl font-bold group-hover:text-blue-400 transition-colors line-clamp-1">
             {item.title}
           </h4>
           <p className="text-sm text-slate-400 mt-2 line-clamp-3">
-            {item.content_text}
+            {item.description}
           </p>
         </div>
         <div className="flex items-center justify-between mt-4">
           <div className="flex items-center space-x-2">
             <span className="text-xs text-slate-300">
-              By {item.authors[0]?.name || "Unknown"}
+              By {item.author || "Unknown"}
             </span>
           </div>
           <a href={item.url} target="_blank" rel="noopener noreferrer">

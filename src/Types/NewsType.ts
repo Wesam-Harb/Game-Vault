@@ -1,32 +1,19 @@
-export interface AllApis {
-  Api: ApiResponse;
+export interface Root {
+  articles: ApiResponse[];
 }
+
 export interface ApiResponse {
-  version: string;
+  source: Source;
+  author: string;
   title: string;
-  home_page_url: string;
-  feed_url: string;
-  language: string;
   description: string;
-  items: Item[];
-}
-
-export interface Item {
-  id: string;
   url: string;
-  title: string;
-  content_text: string;
-  content_html: string;
-  image: string;
-  date_published: string;
-  authors: Author[];
-  attachments: Attachment[];
+  urlToImage: string;
+  publishedAt: string;
+  content: string;
 }
 
-export interface Author {
+export interface Source {
+  id: null | number;
   name: string;
-}
-
-export interface Attachment {
-  url: string;
 }
