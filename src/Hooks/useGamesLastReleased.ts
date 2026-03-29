@@ -1,11 +1,6 @@
 import { getLatestGames } from "../API/getGames";
 import { useState, useEffect } from "react";
-type Game = {
-  id: number;
-  name: string;
-  rating: number;
-  background_image: string;
-};
+import type { Game } from "../Types/Game";
 
 type ApiResponse = {
   count: number;
@@ -13,12 +8,13 @@ type ApiResponse = {
   previous: string | null;
   results: Game[];
 };
+
 export const useLatestGames = () => {
   const [data, setData] = useState<ApiResponse | null>(null);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
     getLatestGames()
-      .then(setData)
+      .then((response) => setData(response))
       .finally(() => setLoading(false));
   }, []);
 
