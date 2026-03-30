@@ -1,22 +1,21 @@
-const API_KEY = "a97bb24eb57246f4ad4a4c78e065683c";
+const API_KEY = "pub_466fb0e5357b4ebaa7ae3813fb90b7d3";
 // src/API/getNews.ts
 
 export const getNews = async (
-  topic: "all" | "gaming" | "hardware" | "esports" | "indie",
+  topic: "all" | "hardware" | "esports" | "indie",
 ) => {
   const queries = {
-    gaming: '("video games" OR "gaming console") NOT "gambling"',
-    hardware: '("RTX" OR "Nvidia" OR "AMD Ryzen" OR "Intel Core")',
-    esports: '("esports" OR "Valorant" OR "League of Legends")',
-    indie: '("indie games" OR "independent developer" OR "itch.io")',
-    // The "All" query combines the core terms of the others
-    all: '("video games" OR "RTX" OR "esports" OR "indie games") NOT "gambling"',
+    all: '"video games" OR "PlayStation" OR "Xbox"',
+    hardware: '"Nvidia" OR "RTX" OR "AMD Ryzen"',
+    esports: '"esports" OR "Valorant" OR "League NOT (sports OR football)"',
+    indie: '"indie games" OR "itch.io"',
   };
 
   const q = encodeURIComponent(queries[topic]);
-  const url = `https://newsapi.org/v2/everything?q=${q}&sortBy=publishedAt&language=en&pageSize=15&apiKey=${API_KEY}`;
+  const url = `https://newsdata.io/api/1/news?apikey=${API_KEY}&qInTitle=${q}&language=en&image=1&removeduplicate=1&size=10&excludecategory=sports`;
 
   const response = await fetch(url);
   const data = await response.json();
-  return data.articles;
+
+  return data.results;
 };

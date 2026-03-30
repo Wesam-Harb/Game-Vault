@@ -19,6 +19,7 @@ export function Home() {
 
   const { data, loading } = useLatestGames();
   const { newsData, newsLoading } = useNews("all");
+
   const firstNews = newsData?.slice(0, 1)[0];
   const restNews = newsData?.slice(2, 5);
 
@@ -322,7 +323,7 @@ export function Home() {
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <a
-                  href={firstNews?.url}
+                  href={firstNews?.source_url}
                   className="block md:col-span-2 group cursor-pointer"
                 >
                   <div>
@@ -330,10 +331,7 @@ export function Home() {
                       <img
                         alt="News Headline"
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                        src={
-                          firstNews?.urlToImage ||
-                          "https://via.placeholder.com/400x250?text=No+Image"
-                        }
+                        src={firstNews?.image_url}
                       />
                       <div className="absolute bottom-0 left-0 right-0 p-8 bg-linear-to-t from-black/90 to-transparent">
                         <span className="text-blue-400 text-xs font-bold uppercase tracking-widest mb-2 block">
@@ -348,15 +346,16 @@ export function Home() {
                 </a>
                 <div className="space-y-6">
                   {restNews?.map((news: ApiResponse) => (
-                    <a key={news.url} href={news.url} className=" block">
+                    <a
+                      key={news.article_id}
+                      href={news.source_url}
+                      className=" block"
+                    >
                       <div className="flex gap-4 group cursor-pointer">
                         <img
                           alt="News thumbnail"
                           className="w-24 h-24 rounded-xl object-cover shrink-0 group-hover:opacity-80 transition-opacity"
-                          src={
-                            news.urlToImage ||
-                            "https://via.placeholder.com/400x250?text=No+Image"
-                          }
+                          src={news.image_url}
                         />
                         <div>
                           <span className="text-blue-400 text-[10px] font-bold uppercase">
@@ -364,7 +363,7 @@ export function Home() {
                           </span>
 
                           <p className="text-xs text-gray-500 mt-1">
-                            {news.publishedAt.slice(0, 10)}
+                            {news.pubDate}
                           </p>
                         </div>
                       </div>

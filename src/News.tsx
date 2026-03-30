@@ -12,9 +12,15 @@ export default function News() {
   const [searchQuery, setSearchQuery] = useState("");
 
   const { newsData, newsLoading } = useNews(
-    selectedCategory as "gaming" | "hardware" | "esports" | "indie" | "all",
+    selectedCategory as "hardware" | "esports" | "indie" | "all",
   );
-  console.log(newsData);
+
+  const categories = [
+    { id: "all", label: "Latest News" },
+    { id: "hardware", label: "Hardware" },
+    { id: "esports", label: "E-Sports" },
+    { id: "indie", label: "Indie Games" },
+  ];
 
   const filteredItems = useMemo(() => {
     if (!newsData) return [];
@@ -61,10 +67,7 @@ export default function News() {
                   loading="lazy"
                   alt="Featured News"
                   className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                  src={
-                    breakingNews?.urlToImage ||
-                    "https://via.placeholder.com/800x450?text=No+Image"
-                  }
+                  src={breakingNews?.image_url}
                 />
                 <div className="absolute inset-0 bg-linear-to-t from-black via-black/70 to-transparent"></div>
                 <div className="relative p-4 h-full w-full flex flex-col">
@@ -80,13 +83,13 @@ export default function News() {
                     </p>
                   </div>
                   <div className="mt-6 flex items-center space-x-4">
-                    <a href={breakingNews?.url}>
+                    <a href={breakingNews?.source_url}>
                       <button className="px-6 py-2.5 cursor-pointer bg-white text-black font-bold rounded-lg hover:bg-blue-500 hover:text-white transition-all">
                         Read Article
                       </button>
                     </a>
                     <span className="text-sm text-slate-300">
-                      {breakingNews?.publishedAt.slice(0, 10)}
+                      {breakingNews?.pubDate.slice(0, 10)}
                     </span>
                   </div>
                 </div>
@@ -151,89 +154,76 @@ export default function News() {
                 Categories
               </h4>
               <ul className="space-y-2">
-                <li
-                  className="flex items-center cursor-pointer justify-between p-2 rounded-lg hover:bg-slate-800 transition-colors text-blue-400 font-medium"
-                  onClick={() => setSelectedCategory("all")}
-                >
-                  <span>Latest News</span>
-                </li>
-
-                <li
-                  className="flex items-center cursor-pointer justify-between p-2 rounded-lg hover:bg-slate-800 transition-colors text-blue-400 font-medium"
-                  onClick={() => setSelectedCategory("hardware")}
-                >
-                  <span>Hardware</span>
-                </li>
-                <li
-                  className="flex items-center cursor-pointer justify-between p-2 rounded-lg hover:bg-slate-800 transition-colors text-blue-400 font-medium"
-                  onClick={() => setSelectedCategory("esports")}
-                >
-                  <span>E-Sports</span>
-                </li>
-                <li
-                  className="flex items-center cursor-pointer justify-between p-2 rounded-lg hover:bg-slate-800 transition-colors text-blue-400 font-medium"
-                  onClick={() => setSelectedCategory("indie")}
-                >
-                  <span>Indie Games</span>
-                </li>
+                {categories.map((cat) => (
+                  <li
+                    key={cat.id}
+                    onClick={() => setSelectedCategory(cat.id)}
+                    className={`flex items-center cursor-pointer justify-between p-2 rounded-lg transition-colors font-medium ${
+                      selectedCategory === cat.id
+                        ? "bg-blue-600 text-white" // Active styles
+                        : "text-blue-400 hover:bg-slate-800" // Inactive styles
+                    }`}
+                  >
+                    <span>{cat.label}</span>
+                  </li>
+                ))}
               </ul>
             </div>
-            <div className="glass-effect rounded-2xl p-6 contain-content max-sm:order-1">
-              <h4 className="font-bold text-lg mb-4 flex items-center">
-                <span className="w-1 h-5 bg-orange-500 rounded-full mr-3"></span>
-                Trending Now
-              </h4>
-              <div className="space-y-5 h-fit">
-                {newsLoading
-                  ? // Skeleton list
-                    [1, 2, 3].map((n) => (
-                      <div key={n} className="flex space-x-3">
-                        <Skeleton
-                          variant="rounded"
-                          width={64}
-                          height={64}
-                          sx={{ bgcolor: "slate.800" }}
-                        />
-                        <div className="flex-1 space-y-2">
+            {trending?.length ? (
+              <div className="glass-effect rounded-2xl p-6 contain-content max-md:order-1">
+                <h4 className="font-bold text-lg mb-4 flex items-center">
+                  <span className="w-1 h-5 bg-orange-500 rounded-full mr-3"></span>
+                  Trending Now
+                </h4>
+                <div className="space-y-5 h-fit">
+                  {newsLoading
+                    ? // Skeleton list
+                      [1, 2, 3].map((n) => (
+                        <div key={n} className="flex space-x-3">
                           <Skeleton
-                            variant="text"
-                            width="90%"
+                            variant="rounded"
+                            width={64}
+                            height={64}
                             sx={{ bgcolor: "slate.800" }}
                           />
-                          <Skeleton
-                            variant="text"
-                            width="60%"
-                            sx={{ bgcolor: "slate.800" }}
-                          />
-                        </div>
-                      </div>
-                    ))
-                  : trending?.map((news, index) => (
-                      <a href={news.url} key={index} className="block">
-                        <div className="flex space-x-3 group cursor-pointer">
-                          <div className="w-16 h-16 bg-slate-700 rounded-lg shrink-0 overflow-hidden">
-                            <img
-                              loading="lazy"
-                              className="w-full h-full object-cover"
-                              src={
-                                news.urlToImage ||
-                                "https://via.placeholder.com/64?text=No+Image"
-                              }
+                          <div className="flex-1 space-y-2">
+                            <Skeleton
+                              variant="text"
+                              width="90%"
+                              sx={{ bgcolor: "slate.800" }}
+                            />
+                            <Skeleton
+                              variant="text"
+                              width="60%"
+                              sx={{ bgcolor: "slate.800" }}
                             />
                           </div>
-                          <div>
-                            <h5 className="text-xs font-semibold group-hover:text-blue-400 transition-colors line-clamp-6">
-                              {news.title}
-                            </h5>
-                            <span className="text-[10px] text-slate-500">
-                              by {news.author}
-                            </span>
-                          </div>
                         </div>
-                      </a>
-                    ))}
+                      ))
+                    : trending?.map((news, index) => (
+                        <a href={news.article_id} key={index} className="block">
+                          <div className="flex space-x-3 group cursor-pointer">
+                            <div className="w-16 h-16 bg-slate-700 rounded-lg shrink-0 overflow-hidden">
+                              <img
+                                loading="lazy"
+                                className="w-full h-full object-cover"
+                                src={news.image_url}
+                              />
+                            </div>
+                            <div>
+                              <h5 className="text-xs font-semibold group-hover:text-blue-400 transition-colors line-clamp-6">
+                                {news.title}
+                              </h5>
+                              <span className="text-[10px] text-slate-500">
+                                by {news.creator || "Unknown Source"}
+                              </span>
+                            </div>
+                          </div>
+                        </a>
+                      ))}
+                </div>
               </div>
-            </div>
+            ) : null}
           </aside>
         </div>
       </main>

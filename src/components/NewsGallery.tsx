@@ -1,5 +1,6 @@
 import { useState, useMemo, memo } from "react";
 import type { ApiResponse } from "../Types/NewsType";
+import imagePlaceholder from "../assets/image placeholder.png";
 
 //MUI component
 import Pagination from "@mui/material/Pagination";
@@ -82,7 +83,7 @@ export function NewsGallery({
     <div>
       <div className="space-y-6">
         {currentItems.map((item: ApiResponse) => (
-          <NewsCard key={item.url} item={item} />
+          <NewsCard key={item.article_id} item={item} />
         ))}
       </div>
 
@@ -92,24 +93,32 @@ export function NewsGallery({
 }
 
 const NewsCard = memo(({ item }: { item: ApiResponse }) => {
+  const [imgError, setImgError] = useState(false);
+
   return (
     <article className="glass-effect rounded-xl overflow-hidden flex flex-col md:flex-row h-auto md:h-52 group">
       <div className="w-full md:w-80 h-48 md:h-full overflow-hidden shrink-0">
-        <img
-          loading="lazy"
-          alt={item.title}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-          src={
-            item.urlToImage ||
-            "https://via.placeholder.com/400x250?text=No+Image"
-          }
-        />
+        {!imgError ? (
+          <img
+            loading="lazy"
+            alt={item.title}
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+            src={item.image_url}
+            onError={() => setImgError(true)}
+          />
+        ) : (
+          <img
+            src={imagePlaceholder}
+            alt={item.title}
+            className="w-full h-full object-cover"
+          />
+        )}
       </div>
       <div className="p-6 flex flex-col justify-between grow">
         <div>
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs text-slate-500">
-              {item.publishedAt.slice(0, 10)}
+              {item.pubDate.slice(0, 10)}
             </span>
           </div>
           <h4 className="text-xl font-bold group-hover:text-blue-400 transition-colors line-clamp-1">
@@ -122,10 +131,10 @@ const NewsCard = memo(({ item }: { item: ApiResponse }) => {
         <div className="flex items-center justify-between mt-4">
           <div className="flex items-center space-x-2">
             <span className="text-xs text-slate-300">
-              By {item.author || "Unknown"}
+              By {item.creator || "Unknown"}
             </span>
           </div>
-          <a href={item.url} target="_blank" rel="noopener noreferrer">
+          <a href={item.source_url} target="_blank" rel="noopener noreferrer">
             <button className="cursor-pointer text-sm font-semibold text-blue-400 hover:underline">
               Read More →
             </button>

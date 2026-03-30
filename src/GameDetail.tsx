@@ -25,7 +25,7 @@ export function GameDetail() {
   const { id } = useParams();
 
   const { data, screens, trailer, loading } = useGamesDetails(id);
-  console.log(data);
+
   const gameTrailer = trailer?.videos
     .flatMap((item) => item)
     .filter((t) => t.includes("https://video.akamai."))[0];
@@ -70,7 +70,6 @@ export function GameDetail() {
     if (favorited) {
       removeFavorite(data.id);
     } else {
-      console.log(data);
       addFavorite(data);
     }
   };

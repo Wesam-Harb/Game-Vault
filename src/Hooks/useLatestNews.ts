@@ -5,7 +5,7 @@ import type { ApiResponse } from "../Types/NewsType";
 
 // If you want to store the whole array
 export function useNews(
-  categoryIndex: "gaming" | "hardware" | "esports" | "indie" | "all",
+  categoryIndex: "hardware" | "esports" | "indie" | "all",
 ) {
   const [newsData, setNewsData] = useState<ApiResponse[] | null>(null);
   const [newsLoading, setNewsLoading] = useState(true);
@@ -15,7 +15,7 @@ export function useNews(
       .then((data) => setNewsData(data))
       .catch((err) => console.error(err))
       .finally(() => setNewsLoading(false));
-  }, [categoryIndex]); // <--- This is the "Trigger"
+  }, [categoryIndex]);
 
   return { newsData, newsLoading };
 }
