@@ -7,6 +7,7 @@ import type { FamilyApi } from "./Types/Family";
 import type { Game } from "./Types/Game";
 import { useFavorites } from "./Hooks/useFavorites";
 import Footer from "./components/Footer";
+import Nav from "./components/Nav";
 
 import { AnimatePresence } from "framer-motion";
 
@@ -75,61 +76,7 @@ export function GameDetail() {
   };
   return (
     <>
-      <header
-        className="sticky top-0 z-50 bg-game-dark/80 backdrop-blur-md border-b border-gray-800"
-        data-purpose="navigation-bar"
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-16">
-          <div className="flex items-center gap-8 ">
-            <Link
-              className="text-2xl font-bold tracking-tighter text-game-accent"
-              to={"/"}
-            >
-              GAME<span className="text-white">VAULT</span>
-            </Link>
-            <nav className="hidden md:flex space-x-6 text-sm font-medium text-gray-400">
-              <Link
-                to={"/browse"}
-                className="hover:text-white transition-colors"
-              >
-                Browse Games
-              </Link>
-              <Link
-                to={"/favorite"}
-                className="hover:text-white transition-colors"
-              >
-                Favorites
-              </Link>
-              <Link to={"/news"} className="hover:text-white transition-colors">
-                News
-              </Link>
-            </nav>
-          </div>
-          <div className="flex items-center gap-4">
-            <button className="p-2 text-gray-400 hover:text-white">
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                ></path>
-              </svg>
-            </button>
-            <div className="w-8 h-8 rounded-full bg-gray-700 overflow-hidden border border-gray-600">
-              <img
-                alt="User Avatar"
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDi4PNdH_ZO8CdcXPf-VaF5NT3zUzz9BSSHJxjPaG75Lx3QxRahqlMujYUMt-xqt-zM71PFpPyq0FhiicoYPbSTvv4wIYqDZRZoFd2Z8DHZshCqvoiu7zJtDD8qRVzhRmd6CVS_dhizuTuu4TxBUgX0LFiRiA7JlsGYJjnrVTmVuKsUMLQmUgzHfHEP4AFoA2aPTnQW7G4pVVz5tVP23GQzInKCqX8J51H69ODDF-eEHEAQJBiM_9jDKdV3igMqYUaE99BCjdc-Tg"
-              />
-            </div>
-          </div>
-        </div>
-      </header>
+      <Nav />
       <main>
         <section
           className="relative w-full h-[60vh] md:h-[90vh] overflow-hidden"
