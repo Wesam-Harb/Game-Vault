@@ -6,6 +6,8 @@ A modern, responsive web application for discovering video games across differen
 
 ## 🚀 Live Demo
 
+https://game-vault-beige-ten.vercel.app/
+
 ## ✨ Key Features
 
 - **Dynamic Routing:** Specialized views for PlayStation, Xbox, and PC using React Router.
